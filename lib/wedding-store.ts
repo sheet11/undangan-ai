@@ -1,15 +1,13 @@
-"use client";
-
 import { wedding as defaultWedding } from "@/config/wedding";
 import type { Wedding } from "@/types/wedding";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
 export type CustomerInvitation = { id: string; customerName: string; wedding: Wedding };
 const STORAGE_KEY = "wedding-premium-customers";
-let cachedCustomers: CustomerInvitation[] | null = null;
 
 export const defaultCustomer: CustomerInvitation = { id: "nadya-aldo", customerName: "Nadya & Aldo", wedding: defaultWedding };
 
-function normalizeCustomer(customer: CustomerInvitation): CustomerInvitation {
+export function normalizeCustomer(customer: CustomerInvitation): CustomerInvitation {
   const oldGift = (customer.wedding as any).gift;
   const migratedGifts = customer.wedding.gifts ?? (oldGift ? [oldGift] : defaultWedding.gifts);
 
@@ -31,7 +29,50 @@ function normalizeCustomer(customer: CustomerInvitation): CustomerInvitation {
   };
 }
 
-export function getCustomers(): CustomerInvitation[] {
+// ── Supabase functions ──────────────────────────────────────────────────────
+
+export async function fetchCustomersFromSupabase(): Promise<CustomerInvitation[]> {
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from("customers")
+    .select("id, customer_name, wedding")
+    .order("created_at", { ascending: true });
+  if (error || !data) return [];
+  return data.map((row) =>
+    normalizeCustomer({ id: row.id, customerName: row.customer_name, wedding: row.wedding as Wedding })
+  );
+}
+
+export async function upsertCustomerToSupabase(customer: CustomerInvitation): Promise<void> {
+  if (!supabase) return;
+  await supabase.from("customers").upsert({
+    id: customer.id,
+    customer_name: customer.customerName,
+    wedding: customer.wedding,
+  });
+}
+
+export async function deleteCustomerFromSupabase(id: string): Promise<void> {
+  if (!supabase) return;
+  await supabase.from("customers").delete().eq("id", id);
+}
+
+export async function fetchCustomerById(id: string): Promise<CustomerInvitation | null> {
+  if (!supabase) return null;
+  const { data, error } = await supabase
+    .from("customers")
+    .select("id, customer_name, wedding")
+    .eq("id", id)
+    .single();
+  if (error || !data) return null;
+  return normalizeCustomer({ id: data.id, customerName: data.customer_name, wedding: data.wedding as Wedding });
+}
+
+// ── localStorage fallback ──────────────────────────────────────────────────
+
+let cachedCustomers: CustomerInvitation[] | null = null;
+
+export function getCustomersFromLocal(): CustomerInvitation[] {
   if (typeof window === "undefined") return [defaultCustomer];
   if (cachedCustomers) return cachedCustomers;
   try {
@@ -40,21 +81,34 @@ export function getCustomers(): CustomerInvitation[] {
     cachedCustomers = customers;
     return customers;
   } catch {
-    const customers = [defaultCustomer];
-    cachedCustomers = customers;
-    return customers;
+    cachedCustomers = [defaultCustomer];
+    return [defaultCustomer];
   }
 }
 
-export function saveCustomers(customers: CustomerInvitation[]) {
+export function saveCustomersToLocal(customers: CustomerInvitation[]) {
   cachedCustomers = customers;
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(customers));
+  if (typeof window !== "undefined") {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(customers));
+  }
+}
+
+// ── Legacy exports (used by Invitation page fallback) ──────────────────────
+
+export { isSupabaseConfigured };
+
+export function getCustomers(): CustomerInvitation[] {
+  return getCustomersFromLocal();
+}
+
+export function saveCustomers(customers: CustomerInvitation[]) {
+  saveCustomersToLocal(customers);
 }
 
 export function getActiveWedding() {
   if (typeof window === "undefined") return defaultWedding;
   const clientId = new URLSearchParams(window.location.search).get("client");
-  const customers = getCustomers();
+  const customers = getCustomersFromLocal();
   return customers.find((customer) => customer.id === clientId)?.wedding ?? customers[0]?.wedding ?? defaultWedding;
 }
 

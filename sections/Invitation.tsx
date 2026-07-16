@@ -1,17 +1,25 @@
 "use client";
 import Image from "next/image";
 import { CalendarDays, ChevronDown, Clock3, Copy, Heart, MapPin, Music } from "lucide-react";
-import { wedding } from "@/config/wedding";
+import { wedding as defaultWedding } from "@/config/wedding";
 import Container from "@/components/common/Container";
 import SectionTitle from "@/components/common/SectionTitle";
 import Opening from "@/sections/Opening";
 import { useCountdown } from "@/hooks/useCountdown";
-import { getActiveWedding } from "@/lib/wedding-store";
+import type { Wedding } from "@/types/wedding";
+import { getActiveWedding, isSupabaseConfigured } from "@/lib/wedding-store";
 import { useSyncExternalStore, useRef, useState } from "react";
 
 const floral = "absolute text-7xl text-[#c6a969]/25 select-none";
-export default function Invitation() {
-  const activeWedding = useSyncExternalStore(() => () => {}, getActiveWedding, () => wedding);
+export default function Invitation({ initialWedding }: { initialWedding?: Wedding }) {
+  const localWedding = useSyncExternalStore(
+    () => () => {},
+    getActiveWedding,
+    () => defaultWedding
+  );
+  const activeWedding = isSupabaseConfigured ? (initialWedding ?? defaultWedding) : localWedding;
+
+
   const time = useCountdown(activeWedding.event.date);
   const copyAccount = (accountNumber: string) => navigator.clipboard?.writeText(accountNumber.replaceAll(" ", ""));
 
