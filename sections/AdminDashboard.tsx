@@ -94,27 +94,27 @@ export default function AdminDashboard() {
   };
   const addCustomer = async () => {
     const next = createCustomer();
-    setCustomers((items) => [...items, next]);
+    const nextCustomers = [...customers, next];
+    setCustomers(nextCustomers);
     setActiveId(next.id);
     setSaved(false);
+    saveCustomersToLocal(nextCustomers); // Always save local backup
     if (isSupabaseConfigured) await upsertCustomerToSupabase(next);
-    else saveCustomersToLocal([...customers, next]);
   };
   const removeCustomer = async () => {
     if (customers.length === 1) return;
-    const next = customers.filter((customer) => customer.id !== active.id);
-    setCustomers(next);
-    setActiveId(next[0].id);
+    const nextCustomers = customers.filter((customer) => customer.id !== active.id);
+    setCustomers(nextCustomers);
+    setActiveId(nextCustomers[0].id);
     setSaved(false);
+    saveCustomersToLocal(nextCustomers); // Always save local backup
     if (isSupabaseConfigured) await deleteCustomerFromSupabase(active.id);
-    else saveCustomersToLocal(next);
   };
   const persist = async () => {
     setSaving(true);
+    saveCustomersToLocal(customers); // Always save local backup
     if (isSupabaseConfigured) {
       await upsertCustomerToSupabase(active);
-    } else {
-      saveCustomersToLocal(customers);
     }
     setSaving(false);
     setSaved(true);
