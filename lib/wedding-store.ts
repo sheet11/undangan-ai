@@ -37,7 +37,11 @@ export async function fetchCustomersFromSupabase(): Promise<CustomerInvitation[]
     .from("customers")
     .select("id, customer_name, wedding")
     .order("created_at", { ascending: true });
-  if (error || !data) return [];
+  if (error) {
+    console.error("fetchCustomersFromSupabase error:", error);
+    return [];
+  }
+  if (!data) return [];
   return data.map((row) =>
     normalizeCustomer({ id: row.id, customerName: row.customer_name, wedding: row.wedding as Wedding })
   );
@@ -45,16 +49,22 @@ export async function fetchCustomersFromSupabase(): Promise<CustomerInvitation[]
 
 export async function upsertCustomerToSupabase(customer: CustomerInvitation): Promise<void> {
   if (!supabase) return;
-  await supabase.from("customers").upsert({
+  const { error } = await supabase.from("customers").upsert({
     id: customer.id,
     customer_name: customer.customerName,
     wedding: customer.wedding,
   });
+  if (error) {
+    console.error("upsertCustomerToSupabase error:", error);
+  }
 }
 
 export async function deleteCustomerFromSupabase(id: string): Promise<void> {
   if (!supabase) return;
-  await supabase.from("customers").delete().eq("id", id);
+  const { error } = await supabase.from("customers").delete().eq("id", id);
+  if (error) {
+    console.error("deleteCustomerFromSupabase error:", error);
+  }
 }
 
 export async function fetchCustomerById(id: string): Promise<CustomerInvitation | null> {
@@ -64,7 +74,11 @@ export async function fetchCustomerById(id: string): Promise<CustomerInvitation 
     .select("id, customer_name, wedding")
     .eq("id", id)
     .single();
-  if (error || !data) return null;
+  if (error) {
+    console.error("fetchCustomerById error:", error);
+    return null;
+  }
+  if (!data) return null;
   return normalizeCustomer({ id: data.id, customerName: data.customer_name, wedding: data.wedding as Wedding });
 }
 
