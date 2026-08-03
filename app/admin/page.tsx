@@ -1,4 +1,4 @@
-import AdminDashboard from "@/sections/AdminDashboard";
+import AdminDashboardEnhanced from "@/sections/AdminDashboardEnhanced";
 
 export const metadata = { title: "Admin | Wedding Premium" };
-export default function AdminPage() { return <AdminDashboard />; }
+export default function AdminPage() { return <AdminDashboardEnhanced />; }
