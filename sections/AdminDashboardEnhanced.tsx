@@ -182,6 +182,12 @@ export default function AdminDashboardEnhanced() {
     update("gallery.prewedding", nextGallery);
   };
 
+  const removePreweddingImage = (index: number) => {
+    const nextGallery = [...(active.wedding.gallery?.prewedding ?? [])];
+    nextGallery.splice(index, 1);
+    update("gallery.prewedding", nextGallery);
+  };
+
   const handleAudioUpload = async (file?: File) => {
     if (!file) return;
 
@@ -357,6 +363,14 @@ export default function AdminDashboardEnhanced() {
                   <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                     {preweddingPreview.map((image, index) => (
                       <div key={`${image}-${index}`} className="relative overflow-hidden rounded-xl border border-[#e2ddd2] bg-white">
+                        <button
+                          type="button"
+                          onClick={() => removePreweddingImage(index)}
+                          className="absolute right-2 top-2 z-10 grid size-8 place-items-center rounded-full bg-[#23382f] text-white shadow-lg transition hover:scale-105"
+                          aria-label={`Hapus prewedding ${index + 1}`}
+                        >
+                          <Trash2 size={14} />
+                        </button>
                         <Image src={image} alt={`Prewedding ${index + 1}`} width={400} height={500} className="h-48 w-full object-cover" />
                       </div>
                     ))}
