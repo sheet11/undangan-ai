@@ -11,5 +11,9 @@ export const wedding: Wedding = {
   ],
   gifts: [{ bank: "BCA", account: "123 456 7890", holder: "Nadya Putri" }],
   images: { hero: "/images/hero-garden.png" },
+  gallery: {
+    prewedding: ["/images/hero-garden.png"],
+  },
+  uiTheme: "classic",
   audio: "/audio/default.mp3",
 };

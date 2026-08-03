@@ -5,5 +5,7 @@ export type Wedding = {
   story: { year: string; title: string; description: string }[];
   gifts: { bank: string; account: string; holder: string }[];
   images: { hero: string };
+  gallery?: { prewedding: string[] };
+  uiTheme?: "classic" | "second";
   audio?: string;
 };

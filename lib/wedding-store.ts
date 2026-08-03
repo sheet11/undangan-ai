@@ -22,6 +22,12 @@ export function normalizeCustomer(customer: CustomerInvitation): CustomerInvitat
       story: customer.wedding.story ?? defaultWedding.story,
       gifts: migratedGifts,
       images: { ...defaultWedding.images, ...customer.wedding.images },
+      gallery: {
+        prewedding: Array.isArray(customer.wedding.gallery?.prewedding)
+          ? customer.wedding.gallery.prewedding
+          : defaultWedding.gallery?.prewedding ?? [],
+      },
+      uiTheme: customer.wedding.uiTheme ?? defaultWedding.uiTheme,
       audio: (!customer.wedding.audio || customer.wedding.audio.startsWith("https://assets.mixkit.co/music/preview/"))
         ? defaultWedding.audio
         : customer.wedding.audio,
