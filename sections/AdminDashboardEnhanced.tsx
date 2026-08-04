@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Copy, ExternalLink, Pause, Play, Plus, Save, Trash2, Upload } from "lucide-react";
+import { ArrowDown, ArrowUp, Copy, ExternalLink, Pause, Play, Plus, Save, Trash2, Upload } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import {
   createCustomer,
@@ -21,6 +21,16 @@ type TextFieldProps = {
   value: string;
   onChange: (value: string) => void;
   type?: string;
+};
+
+const defaultSectionOrder = ["mempelai", "gallery", "countdown", "story", "event", "gifts"];
+const sectionLabels: Record<string, string> = {
+  mempelai: "Mempelai",
+  gallery: "Prewedding gallery",
+  countdown: "Hitung mundur",
+  story: "Love Story",
+  event: "Rangkaian acara & lokasi",
+  gifts: "Wedding gift",
 };
 
 function TextField({ label, value, onChange, type = "text" }: TextFieldProps) {
@@ -128,6 +138,18 @@ export default function AdminDashboardEnhanced() {
         return next;
       })
     );
+  };
+
+  const currentSectionOrder = [
+    ...(active.wedding.sectionOrder?.filter((key) => defaultSectionOrder.includes(key)) ?? []),
+    ...defaultSectionOrder.filter((key) => !(active.wedding.sectionOrder ?? []).includes(key)),
+  ];
+  const moveSection = (index: number, direction: -1 | 1) => {
+    const targetIndex = index + direction;
+    if (targetIndex < 0 || targetIndex >= currentSectionOrder.length) return;
+    const nextOrder = [...currentSectionOrder];
+    [nextOrder[index], nextOrder[targetIndex]] = [nextOrder[targetIndex], nextOrder[index]];
+    update("sectionOrder", nextOrder);
   };
 
   const addCustomer = async () => {
@@ -337,6 +359,37 @@ export default function AdminDashboardEnhanced() {
                   <p className="font-medium text-[#23382f]">Catatan</p>
                   <p className="mt-2">Pilih UI Kedua untuk layout alternatif bernuansa cream-gold, atau Botanical untuk gaya rustic/natural dengan aksen kertas kraft dan ilustrasi sulur daun.</p>
                 </div>
+              </div>
+            </EditorCard>
+
+            <EditorCard title="Urutan section">
+              <div className="space-y-2">
+                {currentSectionOrder.map((key, index) => (
+                  <div key={key} className="flex items-center justify-between rounded-xl border border-[#d8d2c5] bg-[#fffdf8] px-4 py-3">
+                    <span className="text-sm font-medium text-[#23382f]">{sectionLabels[key] ?? key}</span>
+                    <div className="flex gap-1">
+                      <button
+                        type="button"
+                        onClick={() => moveSection(index, -1)}
+                        disabled={index === 0}
+                        className="grid size-8 place-items-center rounded-lg border border-[#d8d2c5] text-[#587060] disabled:cursor-not-allowed disabled:opacity-30"
+                        aria-label={`Naikkan ${sectionLabels[key] ?? key}`}
+                      >
+                        <ArrowUp size={14} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => moveSection(index, 1)}
+                        disabled={index === currentSectionOrder.length - 1}
+                        className="grid size-8 place-items-center rounded-lg border border-[#d8d2c5] text-[#587060] disabled:cursor-not-allowed disabled:opacity-30"
+                        aria-label={`Turunkan ${sectionLabels[key] ?? key}`}
+                      >
+                        <ArrowDown size={14} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                <p className="pt-1 text-[10px] leading-5 text-[#a0998a]">Hero dan penutup "Thank you" selalu berada di paling awal/akhir dan tidak bisa digeser.</p>
               </div>
             </EditorCard>
 

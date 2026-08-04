@@ -8,4 +8,5 @@ export type Wedding = {
   gallery?: { prewedding: string[] };
   uiTheme?: "classic" | "second" | "botanical";
   audio?: string;
+  sectionOrder?: string[];
 };
