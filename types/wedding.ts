@@ -6,6 +6,6 @@ export type Wedding = {
   gifts: { bank: string; account: string; holder: string }[];
   images: { hero: string };
   gallery?: { prewedding: string[] };
-  uiTheme?: "classic" | "second";
+  uiTheme?: "classic" | "second" | "botanical";
   audio?: string;
 };
