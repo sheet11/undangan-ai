@@ -329,12 +329,13 @@ export default function AdminDashboardEnhanced() {
                   >
                     <option value="classic">Classic</option>
                     <option value="second">UI Kedua</option>
+                    <option value="botanical">Botanical (Rustic)</option>
                   </select>
                 </label>
 
                 <div className="rounded-xl bg-[#f7f4ed] p-4 text-sm text-[#587060]">
                   <p className="font-medium text-[#23382f]">Catatan</p>
-                  <p className="mt-2">Pilih UI Kedua untuk menampilkan layout alternatif di halaman undangan.</p>
+                  <p className="mt-2">Pilih UI Kedua untuk layout alternatif bernuansa cream-gold, atau Botanical untuk gaya rustic/natural dengan aksen kertas kraft dan ilustrasi sulur daun.</p>
                 </div>
               </div>
             </EditorCard>
