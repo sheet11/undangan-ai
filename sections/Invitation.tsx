@@ -58,7 +58,7 @@ export default function Invitation({ initialWedding }: { initialWedding?: Weddin
   // memang beda (bukan cuma ganti warna) dari tema Classic/Kedua.
   const floralGlyph = isBotanicalTheme ? "🌿" : "❋";
   const heroEyebrowText = isBotanicalTheme ? "Undangan Pernikahan" : isSecondTheme ? "The Wedding Of" : "Wedding Invitation";
-  const heroAlignClass = isBotanicalTheme ? "items-start text-left" : "items-center text-center";
+  const heroAlignClass = isBotanicalTheme ? "items-center text-center sm:items-start sm:text-left" : "items-center text-center";
   const heroClipClass = isBotanicalTheme
     ? "[clip-path:polygon(0_0,100%_0,100%_91%,93%_96%,86%_90%,79%_97%,72%_90%,65%_96%,58%_89%,51%_97%,44%_90%,37%_96%,30%_89%,23%_97%,16%_90%,9%_96%,2%_90%,0_94%)]"
     : "";
