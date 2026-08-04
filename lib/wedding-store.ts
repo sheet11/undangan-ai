@@ -5,7 +5,7 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 export type CustomerInvitation = { id: string; customerName: string; wedding: Wedding };
 const STORAGE_KEY = "wedding-premium-customers";
 
-export const defaultCustomer: CustomerInvitation = { id: "nadya-aldo", customerName: "Nadya & Aldo", wedding: defaultWedding };
+export const defaultCustomer: CustomerInvitation = { id: "nadya-aldo", customerName: "Person1 & Person2", wedding: defaultWedding };
 
 export function normalizeCustomer(customer: CustomerInvitation): CustomerInvitation {
   const oldGift = (customer.wedding as any).gift;

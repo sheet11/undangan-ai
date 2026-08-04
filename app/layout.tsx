@@ -7,7 +7,7 @@ const body = Poppins({ subsets: ["latin"], weight: ["300", "400", "500", "600", 
 const script = Great_Vibes({ subsets: ["latin"], weight: "400", variable: "--font-script" });
 
 export const metadata: Metadata = {
-  title: "Nadya & Aldo | Wedding Invitation",
+  title: "Person1 & Person2 | Wedding Invitation",
   description: "Undangan pernikahan Nadya Putri dan Aldo Pratama.",
 };
 
